@@ -10,6 +10,12 @@
 		body{
 			margin-top: 30px;
 		}	
+		.my-message{
+			margin-left: 80px;
+		}
+		.not-my-message{
+			margin-right: 80px; 
+		}
 		#messageArea{
 			display: none;
 		}
@@ -106,7 +112,13 @@
 			});
 			
 			socket.on('new message', function(data){
-				$chat.append('<div class="well"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
+				console.log('data.user: '+data.user);
+				console.log('$username: '+$username.val());
+				if (data.user === $username.val()){
+					$chat.append('<div class="well my-message"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
+				}else{
+					$chat.append('<div class="well not-my-message"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
+				}
 			});
 
 			$userForm.submit(function(e){
