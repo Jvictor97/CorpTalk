@@ -91,6 +91,14 @@
 			var $users 		  = $('#users');
 			var $username 	  = $('#username');
 
+			$message.keypress(function (e) {
+    			if(e.which == 13 && !e.shiftKey) {        
+		        	$messageForm.submit();
+		        	e.preventDefault();
+		        	return false;
+		    	}
+			});
+
 			$messageForm.submit(function(e){
 				e.preventDefault();
 				socket.emit('send message', $message.val());
