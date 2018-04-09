@@ -44,6 +44,7 @@
 		*/
 		.caixa-texto{
 			overflow-y: scroll;
+			margin-top: 5px;
 		}
 		.mensagem-erro{
 			color: red;
@@ -174,6 +175,7 @@
 					$onlineUsers.fadeOut(500);
 				else
 					$onlineUsers.fadeIn(500);
+					availableHeight = $(document).height() - $typeArea.outerHeight(true);
 				$chat.height(availableHeight);
 			}
 		});
