@@ -170,6 +170,10 @@
 
 			function setChatHeight(){
 				var availableHeight = $(document).height() - ($onlineUsers.outerHeight(true) + $typeArea.outerHeight(true));
+				if(availableHeight < 0)
+					$onlineUsers.fadeOut(500);
+				else
+					$onlineUsers.fadeIn(500);
 				$chat.height(availableHeight);
 			}
 		});
