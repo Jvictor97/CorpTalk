@@ -9,6 +9,7 @@
 	<style type="text/css">
 		body{
 			margin-top: 30px;
+			height: 100%;
 		}	
 		.my-message{
 			margin-left: 80px;
@@ -43,7 +44,6 @@
 		*/
 		.caixa-texto{
 			overflow-y: scroll;
-			max-height: 48vmin;
 		}
 		.mensagem-erro{
 			color: red;
@@ -68,7 +68,7 @@
 	</div>
 	<div class="container">
 		<div id="messageArea" class="row navbar navbar-fixed-top">
-			<div class="col-md-12">
+			<div id="onlineUsers" class="col-md-12">
 				<div class="well">
 					<h3>Online Users</h3>
 						<!--
@@ -76,8 +76,10 @@
 					<ul class="list-group" id="users"></ul>
 				</div>
 			</div>
-			<div class="col-md-12 navbar navbar-fixed-bottom">
+			<div class="col-md-12">
 				<div class="chat caixa-texto" id="chat"></div>
+			</div>
+			<div id="typeArea" class="col-md-12 navbar navbar-fixed-bottom">
 				<form id="messageForm">
 					<div class="form-group">
 						<label>Enter Message</label>
@@ -103,7 +105,14 @@
 			var $users 		  = $('#users');
 			var $username 	  = $('#username');
 			var $errorMessage = $('#errorMessage');
+			var $onlineUsers  = $('#onlineUsers');
+			var $typeArea 	  = $('#typeArea');
 			var addHeight 	  = 0;
+
+			$(window).resize(function(event) {
+				setChatHeight();
+				scrollBottomMessage();
+			});
 
 			$username.focus(); // Set focus to login input on load
 
@@ -116,6 +125,7 @@
 			});
 
 			$messageForm.submit(function(e){
+				setChatHeight();
 				e.preventDefault();
 				socket.emit('send message', $message.val());
 				$message.val('');
@@ -128,7 +138,7 @@
 					$chat.append('<div class="well not-my-message"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
 				}
 				addHeight += $chat.children().last().outerHeight(true);
-				$chat.scrollTop(addHeight);
+				scrollBottomMessage();
 			});
 
 			$userForm.submit(function(e){
@@ -153,6 +163,15 @@
 				}
 				$users.html(html);
 			});
+
+			function scrollBottomMessage(){
+				$chat.scrollTop(addHeight);
+			}
+
+			function setChatHeight(){
+				var availableHeight = $(document).height() - ($onlineUsers.outerHeight(true) + $typeArea.outerHeight(true));
+				$chat.height(availableHeight);
+			}
 		});
 	</script>
 
