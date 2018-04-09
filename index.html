@@ -172,7 +172,7 @@
 			function setChatHeight(){
 				var availableHeight = $(document).height() - ($onlineUsers.outerHeight(true) + $typeArea.outerHeight(true));
 				if(availableHeight < 0){
-					$onlineUsers.fadeOut(500);
+					$onlineUsers.fadeOut(200);
 					availableHeight = $(document).height() - $typeArea.outerHeight(true);
 				}	
 				else
