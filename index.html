@@ -40,10 +40,15 @@
 			padding-right: 80px;
 			margin-top: 5px;
 		}
+		*/
 		.caixa-texto{
-			overflow: scroll;
-			max-height: inherit;
-		}*/
+			overflow-y: scroll;
+			max-height: 48vmin;
+		}
+		.mensagem-erro{
+			color: red;
+			margin-top: 5px;
+		}
 	</style>
 </head>
 <body>
@@ -54,6 +59,7 @@
 					<div class="form-group">
 						<label>Enter Username</label>
 						<input class="form-control" id="username"/>
+						<p id="errorMessage" class="mensagem-erro"></p>
 						<br>
 						<input type="submit" class="btn btn-primary" value="Login">
 				</form>
@@ -61,8 +67,8 @@
 		</div>
 	</div>
 	<div class="container">
-		<div id="messageArea" class="row">
-			<div class="col-md-4">
+		<div id="messageArea" class="row navbar navbar-fixed-top">
+			<div class="col-md-12">
 				<div class="well">
 					<h3>Online Users</h3>
 						<!--
@@ -70,8 +76,8 @@
 					<ul class="list-group" id="users"></ul>
 				</div>
 			</div>
-			<div class="col-md-8 navbar">
-				<div class="chat" id="chat"></div>
+			<div class="col-md-12 navbar navbar-fixed-bottom">
+				<div class="chat caixa-texto" id="chat"></div>
 				<form id="messageForm">
 					<div class="form-group">
 						<label>Enter Message</label>
@@ -96,6 +102,10 @@
 			var $messageArea  = $('#messageArea');
 			var $users 		  = $('#users');
 			var $username 	  = $('#username');
+			var $errorMessage = $('#errorMessage');
+			var addHeight 	  = 0;
+
+			$username.focus(); // Set focus to login input on load
 
 			$message.keypress(function (e) {
     			if(e.which == 13 && !e.shiftKey) {        
@@ -112,23 +122,28 @@
 			});
 			
 			socket.on('new message', function(data){
-				console.log('data.user: '+data.user);
-				console.log('$username: '+$username.val());
 				if (data.user === $username.val()){
 					$chat.append('<div class="well my-message"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
 				}else{
 					$chat.append('<div class="well not-my-message"><strong>'+data.user+'</strong>: '+data.msg+'</div>')
 				}
+				addHeight += $chat.children().last().outerHeight(true);
+				$chat.scrollTop(addHeight);
 			});
 
 			$userForm.submit(function(e){
 				e.preventDefault();
-				socket.emit('new user', $username.val(), function(data){
-						if(data){
-							$messageArea.show();
-							$userFormArea.hide();
-						}
-				});
+				if($username.val().length > 0){
+					socket.emit('new user', $username.val(), function(data){
+							if(data){
+								$messageArea.show();
+								$userFormArea.hide();
+							}
+					});
+				}
+				else{
+					$errorMessage.html('Favor inserir um nome de usuario!');						
+				}
 			});
 
 			socket.on('get users', function(data){
@@ -138,9 +153,6 @@
 				}
 				$users.html(html);
 			});
-
-
-
 		});
 	</script>
 
